@@ -1,0 +1,11 @@
+[project]
+name = "convert-tif"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = [
+    "pillow",
+    "pillow-heif",
+]
+
+[project.scripts]
+convert-tif = "convert_tif:main"
