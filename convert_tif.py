@@ -9,32 +9,24 @@ import sys
 from pathlib import Path
 
 from PIL import Image
-import pillow_heif
-
-# Register HEIF/AVIF support
-pillow_heif.register_heif_opener()
 
 # Output formats grouped by purpose
 FORMATS = {
     "lossless": {
         "ext": ".png",
-        "description": "Perfect quality, no artifacts (PNG)",
+        "description": "Editing, printing, no generation loss (PNG)",
         "save_args": {"optimize": True},
     },
-    "compatible": {
+    "quality": {
         "ext": ".jpg",
-        "description": "Works everywhere, high quality (JPEG 95%)",
+        "description": "Sharing, Google Photos (JPEG 95%)",
         "save_args": {"quality": 95, "optimize": True},
     },
-    "balanced": {
-        "ext": ".webp",
-        "description": "Good quality + small size (WebP 90%)",
-        "save_args": {"quality": 90, "method": 6},
-    },
     "compact": {
-        "ext": ".avif",
-        "description": "Smallest files, great for uploads (AVIF 85%)",
-        "save_args": {"quality": 85},
+        "ext": ".jpg",
+        "description": "WhatsApp, Discord, quick shares (JPEG 70%, max 2400px)",
+        "save_args": {"quality": 70, "optimize": True},
+        "max_size": 2400,
     },
 }
 
@@ -86,6 +78,18 @@ def convert_image(src: Path, output_dirs: dict[str, Path]) -> dict[str, bool]:
         try:
             # Use RGB for lossy formats, original for lossless
             save_img = img if fmt == "lossless" else rgb_img
+
+            # Resize if max_size is specified
+            if "max_size" in settings:
+                max_size = settings["max_size"]
+                w, h = save_img.size
+                if max(w, h) > max_size:
+                    if w > h:
+                        new_size = (max_size, int(h * max_size / w))
+                    else:
+                        new_size = (int(w * max_size / h), max_size)
+                    save_img = save_img.resize(new_size, Image.Resampling.LANCZOS)
+
             save_img.save(out_path, **settings["save_args"])
             size = human_size(out_path.stat().st_size)
             print(f"  {GREEN}{fmt}: {size}{NC}")

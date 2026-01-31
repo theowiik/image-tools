@@ -25,21 +25,16 @@ By default, outputs are created inside the input directory:
 ├── lossless/
 │   ├── scan1.png
 │   └── scan2.png
-├── compatible/
+├── quality/
 │   ├── scan1.jpg
 │   └── scan2.jpg
-├── balanced/
-│   ├── scan1.webp
-│   └── scan2.webp
 └── compact/
-    ├── scan1.avif
-    └── scan2.avif
+    ├── scan1.jpg
+    └── scan2.jpg
 ```
 
 ## Output folders
 
-- `lossless/` - Perfect quality (PNG)
-- `compatible/` - Works everywhere (JPEG 95%)
-- `balanced/` - Good quality + small size (WebP 90%)
-- `compact/` - Smallest, for uploads (AVIF 85%)
-
+- `lossless/` - Editing, printing, no generation loss (PNG)
+- `quality/` - Sharing, Google Photos (JPEG 95%)
+- `compact/` - WhatsApp, Discord, quick shares (JPEG 70%, max 2400px)
